@@ -1,0 +1,236 @@
+swagger: '2.0'
+
+info:
+  version: '0.1'
+  title: CitySDK Issue reporting API
+  description: The Issue reporting API for service requests to city's feedback system. Based on Open311 Georeport V2.
+  termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
+
+host: asiointi.hel.fi
+basePath: /palautews/rest/v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/x-www-form-urlencoded
+produces:
+  - application/json
+  - application/xml
+parameters:
+  responseFormat:
+    name: response_format
+    in: path
+    description: Response format, can be either xml or json
+    required: true
+    type: string
+    enum:
+      - json
+      - xml
+  localeParam:
+    name: locale
+    description: Preferred language
+    in: query
+    required: false
+    allowEmptyValue: false
+    type: string
+  
+paths:
+  /services.{response_format}:
+    get:
+      summary: Get a list of services and their descriptions
+      responses:
+        200:
+          description: List of services
+        400:
+          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+    parameters:
+    - $ref: '#/parameters/responseFormat'
+    - $ref: '#/parameters/localeParam'
+
+  /services/{service_code}.{response_format}:
+    get: 
+      summary: Query service definition
+      responses:
+        200:
+          description: Definition for a service
+        400:
+          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+    parameters:
+    - name: service_code
+      in: path
+      description: The unique identifier for the service request type.
+      required: true
+      type: string
+    - $ref: '#/parameters/responseFormat'
+    - $ref: '#/parameters/localeParam'
+
+  /requests.{response_format}:
+    get:
+      summary: Query list of service requests
+      responses:
+        200:
+          description: List of service requests
+        400:    
+          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+      parameters:
+      - $ref: '#/parameters/responseFormat'
+      - $ref: '#/parameters/localeParam'  
+      - name: service_request_id
+        in: query
+        description: Unique service request id
+        required: false
+        type: string
+      - name: start_time
+        in: query
+        description: Query service requests after start time
+        required: false
+        type: string
+        format: date
+      - name: end_time
+        in: query
+        description: Query service requests before the end time
+        required: false
+        type: string
+        format: date
+      - name: updated_after
+        in: query
+        description: Earliest updated_datetime to include in search.
+        required: false
+        type: string
+        format: date
+      - name: updated_before
+        in: query
+        description: Latest updated_datetime to include in search.
+        required: false
+        type: string
+        format: date
+      - name: radius
+        in: query
+        description: Search service requests within radius from the lat, long center
+        required: false
+        type: string
+      - name: service_code
+        in: query
+        description: Comma separated list of service_code values to search for
+        required: false
+        type: array
+        items:
+          type: integer
+      - name: extensions
+        in: query
+        description: True if city specific extensions are requested. Default value is false.
+        required: false
+        type: string
+        default: 'false'
+
+    post:
+      summary: Posting service requests
+      responses:
+        200:
+          description: Request has been accepted
+        400:
+          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+        403:
+          description: Missing or Invalid API Key
+      parameters:
+      - name: api_key
+        in: form
+        description: API key
+        required: true
+        type: string
+      - name: service_code
+        in: form
+        description: Service code for the issue, as returned by /services
+        required: true
+        type: string
+      - name: description
+        in: form
+        description: Description of the service request
+        required: true
+        type: string
+      - name: title
+        in: form
+        description: Title description of service request
+        required: false
+        type: string
+      - name: media_url
+        in: form
+        description: Link to media source such as image
+        required: false
+        type: string
+      - name: 'media[]'
+        in: body
+        description: Media file
+        required: false
+        type: file
+      - name: email
+        in: form
+        description: Email
+        required: false
+        type: string
+      - name: first_name
+        in: form
+        description: First name
+        required: false
+        type: string
+      - name: last_name
+        in: form
+        description: Last name
+        required: false
+        type: string
+      - name: address_string
+        in: form
+        description: Address of the service request
+        required: false
+        type: string
+      - name: phone
+        in: form
+        description: Phone number
+        required: false
+        type: string
+
+    parameters:
+    - $ref: '#/parameters/responseFormat'
+    - name: lat
+      in: form
+      description: Latitude of the issue to be searched for or posted
+      required: false
+      type: string
+      default: 50
+    - name: long
+      in: form
+      description: Longitude of the issue to be searched for or posted
+      required: false
+      type: string
+    - name: service_object_id
+      in: form
+      description: Search or post service requests assigned to certain service objects, e.g trash bin
+      required: false
+      type: string
+    - name: service_object_type
+      in: form
+      description: Type of the service object included in the service_object_id
+      required: false
+      type: string
+
+  /requests/{service_request_id}.{response_format}:
+    get:
+      summary: Query individual service requests
+      responses:
+        200:
+          description: Information for the request
+        400:
+          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+    parameters:
+    - $ref: '#/parameters/responseFormat'
+    - name: service_request_id
+      in: path
+      description: Unique service request id
+      required: true
+      type: string
+    - name: extensions
+      in: query
+      description: True if city specific extensions are requested. Default value is false.
+      required: false
+      type: string
+      default: 'false'
