@@ -16,6 +16,7 @@ consumes:
 produces:
   - application/json
   - application/xml
+
 parameters:
   responseFormat:
     name: response_format
@@ -33,7 +34,111 @@ parameters:
     required: false
     allowEmptyValue: false
     type: string
-  
+
+definitions:
+  request_georeport:
+    description: Service request (or generally feedback), standard GeoReport v2
+    required:
+    - service_request_id
+    - status
+    - service_code
+    - requested_datetime
+    properties:
+      service_request_id:
+        type: string
+        description: Unique ID of the service request created.
+      status:
+        type: string
+        enum:
+          - open
+          - closed
+        description: Current status of the service request.
+      status_notes:
+        type: string
+        description: Explanation of why status was changed to current state or more details on current status than conveyed with status alone.
+      service_name: #todo Generalization and linking
+        type: string
+        description: The human readable name of the service request type.
+      service_code:
+        type: string
+        format: uid
+        description: The unique identifier for the service request type
+      description:
+        type: string
+        description: A full description of the request or report submitted.
+      agency_responsible:
+        type: string
+        description: Agency responsible for fulfilling or otherwise addressing the service request.
+      service_notice:
+        type: string
+        description: Information about the action expected to fulfill the request or otherwise address the information reported.
+      requested_datetime:
+        type: string
+        format: date-time
+        description: Date and time when the service request was made.
+      updated_datetime:
+        type: string
+        format: date-time
+        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed.
+      expected_datetime:
+        type: string
+        format: date-time
+        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement.
+      address:
+        type: string
+        description: Human readable address or description of location. This should be provided from most specific to most general geographic unit, eg address number or cross streets, street name, neighborhood/district, city/town/village, county, postal code.
+      address_id:
+        #<?> optional or required?
+        type: string
+        description: Internal address ID used by a jurisdictions master address repository or other addressing system.
+      zipcode:
+        #<?> Already mentioned in address descr?
+        type: string
+        description: postal code for the location of the service request. (Redundant and field might be removed as it should be part of adress string)
+      lat: #Generalisation with
+        type: number
+        format: double
+        description: latitude using the (WGS84) projection.
+      long:
+        type: number
+        format: double
+        description: longitude using the (WGS84) projection.
+      media_url:
+        type: string
+        format: uri
+        #<?> so we write we don't know how to submit
+        description: URL to media associated with the request, eg an image. A convention for parsing media from this URL has yet to be established, so currently it will be done on a case by case basis much like Twitter.com does. For example, if a jurisdiction accepts photos submitted via Twitpic.com, then clients can parse the page at the Twitpic URL for the image given the conventions of Twitpic.com. This could also be a URL to a media RSS feed where the clients can parse for media in a more structured way.
+
+  request_citysdk:
+    description: CitySDK extensions to service request in GeoReport v2
+    required:
+    - title
+    properties:
+      title:
+        type: string
+        description: Title description of service request
+      media_urls:
+        type: array
+        description: Array of URLs pointing to images attached to the request
+        items:
+          type: string
+      service_object_id:
+        type: string
+        description: Search or post service requests assigned to certain service objects, e.g trash bin
+      service_object_type:
+        type: string
+        description: Type of the service object included in the service_object_id
+
+  request_helsinki:
+    description: Helsinki extensions to service request in CitySDK
+    properties:
+      tasks:
+        type: array
+        description: History of subtasks for this request
+        items:
+          #<?> define array here
+          type: string
+
 paths:
   /services.{response_format}:
     get:
