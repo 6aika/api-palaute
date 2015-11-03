@@ -155,57 +155,57 @@ paths:
           description: Missing or Invalid API Key
       parameters:
       - name: api_key
-        in: form
+        in: formData
         description: API key
         required: true
         type: string
       - name: service_code
-        in: form
+        in: formData
         description: Service code for the issue, as returned by /services
         required: true
         type: string
       - name: description
-        in: form
+        in: formData
         description: Description of the service request
         required: true
         type: string
       - name: title
-        in: form
+        in: formData
         description: Title description of service request
         required: false
         type: string
       - name: media_url
-        in: form
+        in: formData
         description: Link to media source such as image
         required: false
         type: string
       - name: 'media[]'
-        in: body
+        in: formData
         description: Media file
         required: false
         type: file
       - name: email
-        in: form
+        in: formData
         description: Email
         required: false
         type: string
       - name: first_name
-        in: form
+        in: formData
         description: First name
         required: false
         type: string
       - name: last_name
-        in: form
+        in: formData
         description: Last name
         required: false
         type: string
       - name: address_string
-        in: form
+        in: formData
         description: Address of the service request
         required: false
         type: string
       - name: phone
-        in: form
+        in: formData
         description: Phone number
         required: false
         type: string
