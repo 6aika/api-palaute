@@ -116,6 +116,27 @@ paths:
         type: array
         items:
           type: integer
+      - name: lat
+        in: query
+        description: Latitude of the issue to be searched for or posted
+        required: false
+        type: string
+        default: '50'
+      - name: long
+        in: query
+        description: Longitude of the issue to be searched for or posted
+        required: false
+        type: string
+      - name: service_object_id
+        in: query
+        description: Search or post service requests assigned to certain service objects, e.g trash bin
+        required: false
+        type: string
+      - name: service_object_type
+        in: query
+        description: Type of the service object included in the service_object_id
+        required: false
+        type: string
       - name: extensions
         in: query
         description: True if city specific extensions are requested. Default value is false.
@@ -188,30 +209,29 @@ paths:
         description: Phone number
         required: false
         type: string
+      - name: lat
+        in: formData
+        description: Latitude of the issue to be searched for or posted
+        required: false
+        type: string
+      - name: long
+        in: formData
+        description: Longitude of the issue to be searched for or posted
+        required: false
+        type: string
+      - name: service_object_id
+        in: formData
+        description: Search or post service requests assigned to certain service objects, e.g trash bin
+        required: false
+        type: string
+      - name: service_object_type
+        in: formData
+        description: Type of the service object included in the service_object_id
+        required: false
+        type: string
 
     parameters:
     - $ref: '#/parameters/responseFormat'
-    - name: lat
-      in: form
-      description: Latitude of the issue to be searched for or posted
-      required: false
-      type: string
-      default: 50
-    - name: long
-      in: form
-      description: Longitude of the issue to be searched for or posted
-      required: false
-      type: string
-    - name: service_object_id
-      in: form
-      description: Search or post service requests assigned to certain service objects, e.g trash bin
-      required: false
-      type: string
-    - name: service_object_type
-      in: form
-      description: Type of the service object included in the service_object_id
-      required: false
-      type: string
 
   /requests/{service_request_id}.{response_format}:
     get:
