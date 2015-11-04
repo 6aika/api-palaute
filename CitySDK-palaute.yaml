@@ -188,6 +188,37 @@ paths:
       responses:
         200:
           description: List of services
+          schema:
+              type: array
+              items:
+                $ref: '#/definitions/Service'
+          examples:
+            application/xml:
+              services:
+                service:
+                  service_code: '171'
+                  service_name: Potholes
+                  description: Report potholes in public streets.
+                  metadata: false
+                  type: realtime
+                  keywords: pothole,street condition
+                  group: Traffic and street condition
+                service:
+                  service_code: '211'
+                  service_name: Playgrounds and sports parks
+                  description: Report if equipment in the playgrounds or sport parks are broken or something else there needs fixing.
+                  metadata: false
+                  type: realtime
+                  keywords: leikkipuisto,liikuntapaikka
+                  group: Parks and forests
+                service:
+                  service_code: '180'
+                  service_name: Other issue to be fixed
+                  description: Use this category if you have found something broken and it does not fit into other categories.
+                  metadata: false
+                  type: realtime
+                  keywords: ''
+                  group: Other
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
     parameters:
@@ -219,6 +250,49 @@ paths:
       responses:
         200:
           description: List of service requests
+          schema:
+            type: array
+            items:
+              allOf:
+                - $ref: '#/definitions/request_georeport'
+                - $ref: '#/definitions/request_citysdk'
+                - $ref: '#/definitions/request_helsinki'
+          examples:
+            request:
+              service_request_id: 3uqqutuj6or12lpgbtnv
+              service_code: '198'
+              description: Liikennemerkki revitty irti paikoiltaan MellunmÃ¤en metroasemalla.
+              requested_datetime: '2015-11-03T08:20:10+02:00'
+              updated_datetime: '2015-11-04T12:45:02+02:00'
+              status: closed
+              status_notes: "Hei,\n\nKiitos ilmoituksestanne. \n\nOlemme vÃ¤littÃ¤neet korjauspyynnÃ¶n alueen katujen kunnossapitoon.\nTerveisin\nRakennusviraston asiakaspalvelu\nPL 1508, 00099 Helsingin kaupunki\nElimÃ¤enkatu 5\np. +358931039000\nwww.hkr.hel.fi\n\n"
+              agency_responsible: Rakennusvirasto
+              service_name: Traffic signs
+              address: MellunmÃ¤enraitio 6, 00970 Helsinki, Suomi
+              lat: 60.2380422
+              media_url: https://asiointi.hel.fi/palautews/rest/v1/attachment/g8md6a5a11r42jooc633.jpg
+              long: 25.1078005
+            request:
+              service_request_id: bou3gcoifl7gcabm0fn2
+              service_code: '174'
+              description: Puun oksa on revennyt lÃ¤hes kokonaan irti ja nojaa viereisen puun oksistoon. Paikka on aivan kÃ¤velytien vieressÃ¤ ja saattaapi hyvinkin seuraavassa myrÃ¤kÃ¤ssÃ¤ rojahtaa suoraan kÃ¤velytielle. Oksa on iso.
+              requested_datetime: '2015-11-02T10:05:10+02:00'
+              updated_datetime: '2015-11-03T16:28:38+02:00'
+              status: closed
+              status_notes: |-
+                Kiitos ilmoituksestanne. Olen vÃ¤littÃ¤nyt asian alueen luonnonhoitoyksikkÃ¶Ã¶n tiedoksi ja toimenpiteitÃ¤ varten.
+                YstÃ¤vÃ¤llisin terveisin
+                Rakennusviraston asiakaspalvelu
+                PL 1508, 00099 Helsingin kaupunki
+                ElimÃ¤enkatu 5
+                p. +358931039000
+                www.hkr.hel.fi
+              agency_responsible: Rakennusvirasto
+              service_name: Parks
+              address: Ratavallintie 26, 00720 Helsinki, Suomi
+              lat: 60.2361827
+              media_url: https://asiointi.hel.fi/palautews/rest/v1/attachment/25gturq7deboolp1i8a2.jpg
+              long: 24.9885022
         400:    
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
       parameters:
