@@ -142,8 +142,44 @@ definitions:
         items:
           #TODO define array here
           type: string
+
+# Service definition is copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
+# https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
+  Service:
+    description: A single service (type) offered via Open311
+    required:
+      - service_code
+      - service_name
+      - type
+    type: object
+    properties:
+      service_code:
+        type: string
+        format: uid
+        description: unique identifier for the service request type
+      service_name:
+        type: string
+        description: human readable name of the service request type
+      description:
+        type: string
+      metadata:
+        type: boolean
+        description: Are there additional form fields for this service type? If true use GET service definition for that one
+      type:
+        type: string
+        description: Possible values realtime, batch, blackbox
+        enum:
+          - realtime
+          - batch
+          - blackbox
+      keywords:
+        type: array
         items:
           type: string
+        description: list of keywords or tags seperated by comma
+      group:
+        type: string
+        description: Category or group to cluster different request types e.g. “sanitation”
 
 paths:
   /services.{response_format}:
@@ -164,6 +200,8 @@ paths:
       responses:
         200:
           description: Definition for a service
+          schema:
+            $ref: '#/definitions/Service'
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
     parameters:
@@ -350,6 +388,11 @@ paths:
       responses:
         200:
           description: Information for the request
+          schema:
+            allOf:
+              - $ref: '#/definitions/request_georeport'
+              - $ref: '#/definitions/request_citysdk'
+              - $ref: '#/definitions/request_helsinki'
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
     parameters:
