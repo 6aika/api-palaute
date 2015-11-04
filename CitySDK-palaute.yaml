@@ -114,33 +114,35 @@ definitions:
         description: URL to media associated with the request, eg an image. A convention for parsing media from this URL has yet to be established, so currently it will be done on a case by case basis much like Twitter.com does. For example, if a jurisdiction accepts photos submitted via Twitpic.com, then clients can parse the page at the Twitpic URL for the image given the conventions of Twitpic.com. This could also be a URL to a media RSS feed where the clients can parse for media in a more structured way.
 
   request_citysdk:
-    description: CitySDK extensions to service request in GeoReport v2
+    title: CitySDK extensions to service request in GeoReport v2
     required:
     - title
     properties:
       title:
         type: string
-        description: Title description of service request
+        title: Short title for the service request
       media_urls:
         type: array
-        description: Array of URLs pointing to images attached to the request
+        title: Array of URLs pointing to images attached to the request
         items:
           type: string
       service_object_id:
         type: string
-        description: Search or post service requests assigned to certain service objects, e.g trash bin
+        title: Identifier for the target of feedback. These are city or domain-specific
       service_object_type:
         type: string
-        description: Type of the service object included in the service_object_id
+        title: Namespace for service_object_id, suggested to be URI
 
   request_helsinki:
-    description: Helsinki extensions to service request in CitySDK
+    title: Helsinki extensions to service request in CitySDK
     properties:
       tasks:
         type: array
-        description: History of subtasks for this request
+        title: History of subtasks for this request
         items:
-          #<?> define array here
+          #TODO define array here
+          type: string
+        items:
           type: string
 
 paths:
