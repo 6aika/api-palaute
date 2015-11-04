@@ -1,9 +1,9 @@
 swagger: '2.0'
 
 info:
-  version: '0.1'
-  title: CitySDK Issue reporting API
-  description: The Issue reporting API for service requests to city's feedback system. Based on Open311 Georeport V2.
+  version: '1.0'
+  title: 6Aika Issue reporting API proposal
+  description: Proposed API for issue reporting for 6Aika cities. Based on Open311 Georeport V2 & CitySDK extensions
   termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
 
 host: asiointi.hel.fi
@@ -36,13 +36,17 @@ parameters:
     type: string
 
 definitions:
+  # This is copied verbatim from https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
+  # version 0b2fc29
   request_georeport:
-    description: Service request (or generally feedback), standard GeoReport v2
+    title: Service request, standard GeoReport v2
     required:
     - service_request_id
     - status
     - service_code
     - requested_datetime
+    # Properties are copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
+    # https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
     properties:
       service_request_id:
         type: string
@@ -250,7 +254,7 @@ paths:
         default: 'false'
 
     post:
-      summary: Posting service requests
+      summary: Post a service request
       responses:
         200:
           description: Request has been accepted
