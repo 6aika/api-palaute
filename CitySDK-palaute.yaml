@@ -221,9 +221,9 @@ paths:
                   group: Other
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
-    parameters:
-    - $ref: '#/parameters/responseFormat'
-    - $ref: '#/parameters/localeParam'
+      parameters:
+      - $ref: '#/parameters/responseFormat'
+      - $ref: '#/parameters/localeParam'
 
   /services/{service_code}.{response_format}:
     get: 
@@ -235,14 +235,14 @@ paths:
             $ref: '#/definitions/Service'
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
-    parameters:
-    - name: service_code
-      in: path
-      description: The unique identifier for the service request type.
-      required: true
-      type: string
-    - $ref: '#/parameters/responseFormat'
-    - $ref: '#/parameters/localeParam'
+      parameters:
+      - name: service_code
+        in: path
+        description: The unique identifier for the service request type.
+        required: true
+        type: string
+      - $ref: '#/parameters/responseFormat'
+      - $ref: '#/parameters/localeParam'
 
   /requests.{response_format}:
     get:
@@ -469,16 +469,16 @@ paths:
               - $ref: '#/definitions/request_helsinki'
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
-    parameters:
-    - $ref: '#/parameters/responseFormat'
-    - name: service_request_id
-      in: path
-      description: Unique service request id
-      required: true
-      type: string
-    - name: extensions
-      in: query
-      description: True if city specific extensions are requested. Default value is false.
-      required: false
-      type: string
-      default: 'false'
+      parameters:
+      - $ref: '#/parameters/responseFormat'
+      - name: service_request_id
+        in: path
+        description: Unique service request id
+        required: true
+        type: string
+      - name: extensions
+        in: query
+        description: True if city specific extensions are requested. Default value is false.
+        required: false
+        type: string
+        default: 'false'
