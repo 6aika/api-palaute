@@ -17,6 +17,12 @@ produces:
   - application/json
   - application/xml
 
+tags:
+  - name: service_type
+    description: Service types for requests
+  - name: service_request
+    description: Service requests
+
 parameters:
   responseFormat:
     name: response_format
@@ -192,6 +198,8 @@ paths:
   /services.{response_format}:
     get:
       summary: Get a list of services and their descriptions
+      tags:
+        - service_type
       responses:
         200:
           description: List of services
@@ -235,6 +243,8 @@ paths:
   /services/{service_code}.{response_format}:
     get: 
       summary: Query service definition
+      tags:
+        - service_type
       responses:
         200:
           description: Definition for a service
@@ -254,6 +264,8 @@ paths:
   /requests.{response_format}:
     get:
       summary: Query list of service requests
+      tags:
+        - service_request
       responses:
         200:
           description: List of service requests
@@ -375,6 +387,8 @@ paths:
 
     post:
       summary: Post a service request
+      tags:
+        - service_request
       responses:
         200:
           description: Request has been accepted
@@ -463,6 +477,8 @@ paths:
   /requests/{service_request_id}.{response_format}:
     get:
       summary: Query individual service requests
+      tags:
+        - service_request
       responses:
         200:
           description: Information for the request
