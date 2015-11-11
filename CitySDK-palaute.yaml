@@ -453,9 +453,7 @@ paths:
         description: Type of the service object included in the service_object_id
         required: false
         type: string
-
-    parameters:
-    - $ref: '#/parameters/responseFormat'
+      - $ref: '#/parameters/responseFormat'
 
   /requests/{service_request_id}.{response_format}:
     get:
