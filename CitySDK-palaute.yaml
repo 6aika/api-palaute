@@ -34,6 +34,13 @@ parameters:
     required: false
     allowEmptyValue: false
     type: string
+  enable_extensions:
+    name: extensions
+    in: query
+    description: '**CitySDK extension** True if city specific extensions are requested. Default value is false.'
+    required: false
+    type: boolean
+    default: false
 
 definitions:
   # This is copied verbatim from https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
@@ -465,14 +472,9 @@ paths:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
       parameters:
       - $ref: '#/parameters/responseFormat'
+      - $ref: '#/parameters/enable_extensions'
       - name: service_request_id
         in: path
         description: Unique service request id
         required: true
         type: string
-      - name: extensions
-        in: query
-        description: True if city specific extensions are requested. Default value is false.
-        required: false
-        type: string
-        default: 'false'
