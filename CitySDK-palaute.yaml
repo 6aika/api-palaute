@@ -327,6 +327,11 @@ paths:
         required: false
         type: string
         format: date
+      - name: status
+        description: Limit to requests with one statuses listed here
+        in: query
+        type: string
+      - $ref: '#/parameters/enable_extensions'
       # CitySDK extensions begin here
       - name: updated_after
         in: query
