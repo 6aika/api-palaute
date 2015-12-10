@@ -156,6 +156,42 @@ definitions:
           #TODO define array here
           type: string
 
+  request_6aika:
+    title: 6Aika extensions to service request in CitySDK
+    description: 6aika extension is a history log for a request. This is a quintuple consisting of time-status-note-image. There are several versions on this same extension for Open311. Unfortunately no common ground exists yet.
+    properties:
+      request_history:
+        type: array
+        title: History of actions done on this request
+        items:
+          type: object
+          properties:
+            time:
+              description: time when the request changed to this status
+              type: string
+              format: date-time
+            status:
+              description: status of request at this time
+              type: string
+              enum:
+              # Request has been received and stored into system
+              - received
+              # Request has been allocated to processor, can happen several times
+              - allocated
+              # Request in being handled (ie. request has been handed off to someone who will fix the broken things or answer information request).
+              - handling
+              # Request has been handled and something has been done to handle it
+              - done
+              # request required no action. We consider handle->done path better
+              #- no_action
+            note:
+              description: freeform note regarding this status change
+              type: string
+            image:
+              description: URI for image relevant to this status change
+              type: string
+              format: uri
+
 # Service definition is copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
 # https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
   Service:
