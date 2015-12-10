@@ -263,7 +263,8 @@ paths:
 
   /requests.{response_format}:
     get:
-      summary: Query list of service requests
+      summary: Query list of service requests.
+      description: List of services requests is always returned sorted in descending order by creation date
       tags:
         - service_request
       responses:
