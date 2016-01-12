@@ -128,6 +128,7 @@ definitions:
 
   request_citysdk:
     title: CitySDK extensions to service request in GeoReport v2
+    description: CitySDK extensions add a title, multiple images and object identifier to the original Georeport V2
     required:
     - title
     properties:
@@ -148,6 +149,7 @@ definitions:
 
   request_helsinki:
     title: Helsinki extensions to service request in CitySDK
+    description: Extensions for internal statistics usage for the City of Helsinki. These are unlikely to be of use to other parties.
     properties:
       tasks:
         type: array
@@ -201,6 +203,7 @@ definitions:
 # Service definition is copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
 # https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
   Service:
+    title: Service type
     description: A single service (type) offered via Open311
     required:
       - service_code
