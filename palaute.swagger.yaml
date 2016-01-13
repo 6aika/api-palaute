@@ -477,9 +477,13 @@ paths:
         type: string
       - name: 'media[]'
         in: formData
-        description: Media file
+        description: '**CitySDK extension** Array of files to attach to the request. Swagger cannot accurately express this. Media field is repeated in the form as many times as there are uploads. The number of files allowed is determined by the API provider.'
         required: false
-        type: file
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+          format: binary
       - name: email
         in: formData
         description: Email
