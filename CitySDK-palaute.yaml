@@ -6,8 +6,10 @@ info:
   description: Proposed API for issue reporting for 6Aika cities. Based on Open311 Georeport V2 & CitySDK extensions
   termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
 
+# The following host and basePath are to allow testing and demoing the API
 host: asiointi.hel.fi
 basePath: /palautews/rest/v1
+
 schemes:
   - https
   - http
