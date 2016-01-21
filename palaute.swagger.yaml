@@ -1,12 +1,23 @@
 swagger: '2.0'
 
 info:
-  version: '1.0'
-  title: Issue reporting API (DRAFT)
-  description: Proposed API for issue reporting for 6Aika cities. Based on Open311 Georeport V2 & CitySDK extensions
-  termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
+  title: Issue reporting API
+  description: >
+    Proposed API definition for issue reporting or feedback created initially for 6Aika cities. Based on Open311 Georeport V2 & CitySDK extensions.
 
-# The following host and basePath are to allow testing and demoing the API
+
+    APIs conforming to this definition allow users to see all public feedback left to the organization, typically a city. Additionally pre-approved parties with API key can also leave feedback. All feedback contain title, description and, where applicable, location and image. This immediately allows for map based mashups, although the scope of uses need not to be so limited. Additionally, depending on organization, the feedback can contain information on how the feedback is being processed inside the organizations.
+
+
+    The extensions to original Georeport V2 are marked as follows: for query parameters **bold** text indicates either CitySDK extension or 6Aika extension. Extension to the request response are split into separate models called request_georeport, request_citysdk and request_6aika. These correspond to the obvious sources.
+
+    Note on terminology: Georeport V2 was originally designed for reporting issues that needed some kind of service action from the city. Thus the feedback is called "service request" and the API endpoint is named /requests. In this specification requests are used for all kinds of feedback. Situation is similar with "service request type" and /services endpoint. Services are used to optionally categorize feedback.
+
+  termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
+  version: DRAFT
+
+# The following host and basePath are to allow testing and demoing the API. Helsinki implementation
+# includes extra fields not defined in this specification.
 host: asiointi.hel.fi
 basePath: /palautews/rest/v1
 
@@ -37,24 +48,22 @@ parameters:
       - xml
   localeParam:
     name: locale
-    description: '**CitySDK extension** Preferred language (eg. fi, en_GB), default is English.'
+    description: '**CitySDK extension** Preferred language in ISO 639-1 form (two letters + optional variant eg. fi, en_GB), default is English. Setting locale is not guaranteed to translate anything. Most likely only the service descriptions (in /service endpoint) are translated.'
     in: query
     required: false
-    allowEmptyValue: false
     type: string
   enable_extensions:
     name: extensions
     in: query
-    description: '**CitySDK extension** True if city specific extensions are requested. Default value is false.'
+    description: '**CitySDK extension** Enable extensions to the base Georeport V2. Without this, responses will only contain attributes from original GeoReport V2 (request_georeport)'
     required: false
     type: boolean
     default: false
 
 definitions:
-  # This is copied verbatim from https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
-  # version 0b2fc29
   request_georeport:
     title: Service request, standard GeoReport v2
+    description: Service request contains the feedback data and the basic processing state of the feedback (status and status_notes). Also included is the address_id that could be used to identify locations. 6Aika definition recommends using service_object_id and service_object_type in the citysdk extensions.
     required:
     - service_request_id
     - status
@@ -130,7 +139,7 @@ definitions:
 
   request_citysdk:
     title: CitySDK extensions to service request in GeoReport v2
-    description: CitySDK extensions add a title, multiple images and object identifier to the original Georeport V2
+    description: CitySDK extensions add a title, multiple images and object identifier (service_object_*) to the original Georeport V2
     required:
     - title
     properties:
@@ -151,18 +160,17 @@ definitions:
 
   request_helsinki:
     title: Helsinki extensions to service request in CitySDK
-    description: Extensions for internal statistics usage for the City of Helsinki. These are unlikely to be of use to other parties.
+    description: Extensions for internal statistics usage for the City of Helsinki. These are unlikely to be of use to other parties and they are not used in this specification.
     properties:
       tasks:
         type: array
         title: History of subtasks for this request
         items:
-          #TODO define array here
           type: string
 
   request_6aika:
     title: 6Aika extensions to service request in CitySDK
-    description: 6aika extension is a history log for a request. This is a quintuple consisting of time-status-note-image. There are several versions on this same extension for Open311. Unfortunately no common ground exists yet.
+    description: 6aika extension is a history log for a request. This is a quintuple consisting of time-status-note-image. There are several versions of this same extension for Open311. Unfortunately no common ground exists yet.
     properties:
       request_history:
         type: array
@@ -195,7 +203,7 @@ definitions:
               description: freeform note regarding this status change
               type: string
             handler:
-              description: The person handling the request at this point of time. This is opaque id specific to the city. Also handler is likely only shown to authenticated users
+              description: The person handling the request at this point of time. This is opaque id specific to the city. Also handler is likely only shown to authenticated users, with city specific authentication system.
               type: string
             image:
               description: URI for image relevant to this status change
@@ -446,7 +454,7 @@ paths:
         200:
           description: Request has been accepted
         400:
-          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+          description: The URL request is invalid or service is not running or reachable
         403:
           description: Missing or Invalid API Key
       parameters:
@@ -543,7 +551,7 @@ paths:
             allOf:
               - $ref: '#/definitions/request_georeport'
               - $ref: '#/definitions/request_citysdk'
-              - $ref: '#/definitions/request_helsinki'
+              - $ref: '#/definitions/request_6aika'
         400:
           description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
       parameters:
