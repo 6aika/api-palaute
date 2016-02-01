@@ -26,6 +26,7 @@ schemes:
   - http
 consumes:
   - application/x-www-form-urlencoded
+  - multipart/form-data
 produces:
   - application/json
   - application/xml
@@ -103,15 +104,15 @@ definitions:
       requested_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was made.
+        description: Date and time when the service request was made. Dates can be specified using ISO 8601 ("2016-01-12").
       updated_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed.
+        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed. Dates can be specified using ISO 8601 ("2016-01-12")
       expected_datetime:
         type: string
         format: date-time
-        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement.
+        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement. Dates can be specified using ISO 8601 ("2016-01-12")
       address:
         type: string
         description: Human readable address or description of location. This should be provided from most specific to most general geographic unit, eg address number or cross streets, street name, neighborhood/district, city/town/village, county, postal code.
@@ -182,7 +183,7 @@ definitions:
           - status
           properties:
             time:
-              description: time when the request changed to this status
+              description: time when the request changed to this status. Dates can be specified using ISO 8601 ("2016-01-12")
               type: string
               format: date-time
             status:
@@ -193,7 +194,7 @@ definitions:
               - received
               # Request has been allocated to handler, can happen several times
               - allocated
-              # Request in being handled (ie. request has been handed off to someone who will fix the broken things or answer information request).
+              # Request is being handled (ie. request has been handed off to someone who will fix the broken things or answer information request).
               - handling
               # Request has been handled and something has been done to handle it
               - done
@@ -480,12 +481,12 @@ paths:
         type: string
       - name: media_url
         in: formData
-        description: Link to media source such as image
+        description: Link to media source such as image. Alternatively the image can be transferred in-situ using media[] field.
         required: false
         type: string
       - name: 'media[]'
         in: formData
-        description: '**CitySDK extension** Array of files to attach to the request. Swagger cannot accurately express this. Media field is repeated in the form as many times as there are uploads. The number of files allowed is determined by the API provider.'
+        description: '**CitySDK extension** Array of files to attach to the request. Swagger cannot accurately express this. Media field is repeated in the form as many times as there are uploads. The number of files allowed is determined by the API provider. Also, if this field is used, the data must be submitted as multipart/form-data.'
         required: false
         type: array
         collectionFormat: multi
