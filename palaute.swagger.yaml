@@ -104,15 +104,15 @@ definitions:
       requested_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was made. Dates can be specified using ISO 8601 ("2016-01-12").
+        description: Date and time when the service request was made. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       updated_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed. Dates can be specified using ISO 8601 ("2016-01-12")
+        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       expected_datetime:
         type: string
         format: date-time
-        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement. Dates can be specified using ISO 8601 ("2016-01-12")
+        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       address:
         type: string
         description: Human readable address or description of location. This should be provided from most specific to most general geographic unit, eg address number or cross streets, street name, neighborhood/district, city/town/village, county, postal code.
@@ -183,7 +183,7 @@ definitions:
           - status
           properties:
             time:
-              description: time when the request changed to this status. Dates can be specified using ISO 8601 ("2016-01-12")
+              description: time when the request changed to this status. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
               type: string
               format: date-time
             status:
