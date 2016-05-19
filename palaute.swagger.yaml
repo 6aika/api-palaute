@@ -16,8 +16,8 @@ info:
 
 
     The extensions to original Georeport V2 are marked as follows: for query parameters **bold** text
-    indicates either CitySDK extension or 6Aika extension. Extension to the request response are split
-    into separate models called request_georeport, request_citysdk and request_6aika.
+    indicates either CitySDK extension or 6Aika request log extension. Extension to the request response are split
+    into separate models called request_georeport, request_citysdk and request_log.
     These correspond to the obvious sources.
 
     Note on terminology: Georeport V2 was originally designed for reporting issues that needed some kind
@@ -227,16 +227,15 @@ definitions:
         items:
           type: string
 
-  request_6aika:
-    title: 6Aika extensions to service request in CitySDK
-    description: >
-      6aika extension is a history log for a request.
-      This is a quintuple consisting of time-status-note-image.
+  request_log:
+    title: Request log extensions to service request in CitySDK
+    description:
+      An extension to log a request's history.
 
       There are several versions of this same extension for Open311.
       Unfortunately no common ground exists yet.
     properties:
-      request_history:
+      log:
         type: array
         title: History of actions done on this request
         items:
@@ -247,33 +246,30 @@ definitions:
           properties:
             time:
               description: >
-                time when the request changed to this status.
+                The time when the request changed to this status.
                 Datetimes are specified using ISO 8601.
               type: string
               format: date-time
             status:
-              description: status of request at this time
+              description: The status of request at this time
               type: string
               enum:
-                - received  # Request has been received and stored into system
                 - allocated   # Request has been allocated to handler, can happen several times
                 - handling  # Request is being handled (ie. request has been handed off to someone
                 # who will fix the broken things or answer information request).
                 - done  # Request has been handled and something has been done to handle it
                 # - no_action  # request required no action. We consider handle->done path better
             note:
-              description: freeform note regarding this status change
+              description: A freeform note regarding this status change
               type: string
             handler:
               description: >
                 The person handling the request at this point of time.
-                This is opaque id specific to the city.
-
-                Also handler is likely only shown to authenticated users,
-                with city specific authentication system.
+                The format of this field is not specified; it can be an opaque id specific to the city.
+                It is possible that the API does not expose this value except for authenticated users.
               type: string
-            image:
-              description: URI for image relevant to this status change
+            attachment_url:
+              description: URI for an attachment, such as an image, relevant to this status change
               type: string
               format: uri
 
@@ -408,7 +404,7 @@ paths:
               allOf:
                 - $ref: '#/definitions/request_georeport'
                 - $ref: '#/definitions/request_citysdk'
-                - $ref: '#/definitions/request_6aika'
+                - $ref: '#/definitions/request_log'
           examples:
             requests:
               - request:
@@ -535,7 +531,8 @@ paths:
         - name: handler
           in: query
           description: >
-            **6Aika extension** Search for requests currently being handled by this handler. Only authenticated users(?)
+            **6Aika (request log) extension**
+            Search for requests currently being handled by this handler. Only authenticated users(?)
           required: false
           type: string
         - $ref: '#/parameters/responseFormat'
@@ -654,7 +651,7 @@ paths:
             allOf:
               - $ref: '#/definitions/request_georeport'
               - $ref: '#/definitions/request_citysdk'
-              - $ref: '#/definitions/request_6aika'
+              - $ref: '#/definitions/request_log'
         400:
           description: >
             The URL request is invalid or service is not running or reachable.
