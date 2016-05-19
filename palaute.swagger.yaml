@@ -1,17 +1,31 @@
+---
 swagger: '2.0'
 
 info:
   title: Issue reporting API
   description: >
-    Proposed API definition for issue reporting or feedback created initially for 6Aika cities. Based on Open311 Georeport V2 & CitySDK extensions.
+    A proposed API definition for issue reporting or feedback created initially for 6Aika cities.
+    Based on Open311 Georeport V2 & CitySDK extensions.
+
+    APIs conforming to this definition allow users to see all public feedback left to the organization,
+    typically a city. Additionally pre-approved parties with API key can also leave feedback.
+    All feedback contain title, description and, where applicable, location and image.
+    This immediately allows for map based mashups, although the scope of uses need not to be so limited.
+    Additionally, depending on organization, the feedback can contain information on how the feedback is
+    being processed inside the organizations.
 
 
-    APIs conforming to this definition allow users to see all public feedback left to the organization, typically a city. Additionally pre-approved parties with API key can also leave feedback. All feedback contain title, description and, where applicable, location and image. This immediately allows for map based mashups, although the scope of uses need not to be so limited. Additionally, depending on organization, the feedback can contain information on how the feedback is being processed inside the organizations.
+    The extensions to original Georeport V2 are marked as follows: for query parameters **bold** text
+    indicates either CitySDK extension or 6Aika request log extension. Extension to the request response are split
+    into separate models called request_georeport, request_citysdk and request_log.
+    These correspond to the obvious sources.
 
+    Note on terminology: Georeport V2 was originally designed for reporting issues that needed some kind
+    of service action from the city. Thus the feedback is called "service request" and the API endpoint
+    is named /requests. In this specification requests are used for all kinds of feedback.
 
-    The extensions to original Georeport V2 are marked as follows: for query parameters **bold** text indicates either CitySDK extension or 6Aika extension. Extension to the request response are split into separate models called request_georeport, request_citysdk and request_6aika. These correspond to the obvious sources.
-
-    Note on terminology: Georeport V2 was originally designed for reporting issues that needed some kind of service action from the city. Thus the feedback is called "service request" and the API endpoint is named /requests. In this specification requests are used for all kinds of feedback. Situation is similar with "service request type" and /services endpoint. Services are used to optionally categorize feedback.
+    Situation is similar with "service request type" and /services endpoint.
+    Services are used to optionally categorize feedback.
 
   termsOfService: (depends on server instance, for example Helsinki http://dev.hel.fi/issuereporting/tos)
   version: DRAFT
@@ -49,14 +63,22 @@ parameters:
       - xml
   localeParam:
     name: locale
-    description: '**CitySDK extension** Preferred language in ISO 639-1 form (two letters + optional variant eg. fi, en_GB), default is English. Setting locale is not guaranteed to translate anything. Most likely only the service descriptions (in /service endpoint) are translated.'
+    description: >
+      **CitySDK extension**
+      Preferred language in ISO 639-1 form (two letters + optional variant eg. fi, en_GB), default is English.
+      Setting locale is not guaranteed to translate anything.
+      Most likely only the service descriptions (in /service endpoint) are translated.
     in: query
     required: false
     type: string
   enable_extensions:
     name: extensions
     in: query
-    description: '**CitySDK extension** Enable extensions to the base Georeport V2. Without this, responses will only contain attributes from original GeoReport V2 (request_georeport)'
+    description: >
+      **CitySDK extension** Enable extensions to the base Georeport V2.
+
+      Without this, responses will only contain attributes from original GeoReport V2 (request_georeport)
+
     required: false
     type: boolean
     default: false
@@ -64,12 +86,17 @@ parameters:
 definitions:
   request_georeport:
     title: Service request, standard GeoReport v2
-    description: Service request contains the feedback data and the basic processing state of the feedback (status and status_notes). Also included is the address_id that could be used to identify locations. 6Aika definition recommends using service_object_id and service_object_type in the citysdk extensions.
+    description: >
+      Service request contains the feedback data and the basic processing state of the feedback
+      (status and status_notes).
+
+      Also included is the address_id that could be used to identify locations.
+      6Aika definition recommends using service_object_id and service_object_type in the citysdk extensions.
     required:
-    - service_request_id
-    - status
-    - service_code
-    - requested_datetime
+      - service_request_id
+      - status
+      - service_code
+      - requested_datetime
     # Properties are copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
     # https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
     properties:
@@ -84,8 +111,10 @@ definitions:
         description: Current status of the service request.
       status_notes:
         type: string
-        description: Explanation of why status was changed to current state or more details on current status than conveyed with status alone.
-      service_name: #todo Generalization and linking
+        description: >
+          Explanation of why status was changed to current state or more details on
+          the current status than conveyed with status alone.
+      service_name:  # TODO: Generalization and linking
         type: string
         description: The human readable name of the service request type.
       service_code:
@@ -100,49 +129,76 @@ definitions:
         description: Agency responsible for fulfilling or otherwise addressing the service request.
       service_notice:
         type: string
-        description: Information about the action expected to fulfill the request or otherwise address the information reported.
+        description: >
+          Information about the action expected to fulfill the request or otherwise address the information reported.
       requested_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was made. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
+        description: >
+          Date and time when the service request was made.
+          Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       updated_datetime:
         type: string
         format: date-time
-        description: Date and time when the service request was last modified. For requests with status=closed, this will be the date the request was closed. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
+        description: >
+          Date and time when the service request was last modified.
+          For requests with status=closed, this will be the date the request was closed.
+          Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       expected_datetime:
         type: string
         format: date-time
-        description: The date and time when the service request can be expected to be fulfilled. This may be based on a service-specific service level agreement. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
+        description: >
+          The date and time when the service request can be expected to be fulfilled.
+          This may be based on a service-specific service level agreement.
+          Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
       address:
         type: string
-        description: Human readable address or description of location. This should be provided from most specific to most general geographic unit, eg address number or cross streets, street name, neighborhood/district, city/town/village, county, postal code.
+        description: >
+          Human readable address or description of location.
+          This should be provided from most specific to most general geographic unit,
+          e.g. address number or cross streets, street name,
+          neighborhood/district, city/town/village, county, postal code.
       address_id:
-        #<?> optional or required?
+        # <?> optional or required?
         type: string
-        description: Internal address ID used by a jurisdictions master address repository or other addressing system.
+        description: >
+          Internal address ID used by a jurisdictions master address repository or other addressing system.
       zipcode:
-        #<?> Already mentioned in address descr?
+        # <?> Already mentioned in address descr?
         type: string
-        description: postal code for the location of the service request. (Redundant and field might be removed as it should be part of adress string)
-      lat: #Generalisation with
+        description: >
+          postal code for the location of the service request.
+          (Redundant and field might be removed as it should be part of adress string)
+      lat:  # Generalisation with
         type: number
         format: double
-        description: latitude using the (WGS84) projection.
+        description: latitude using the WGS84 projection.
       long:
         type: number
         format: double
-        description: longitude using the (WGS84) projection.
+        description: longitude using the WGS84 projection.
       media_url:
         type: string
         format: uri
-        #<?> so we write we don't know how to submit
-        description: URL to media associated with the request, eg an image. A convention for parsing media from this URL has yet to be established, so currently it will be done on a case by case basis much like Twitter.com does. For example, if a jurisdiction accepts photos submitted via Twitpic.com, then clients can parse the page at the Twitpic URL for the image given the conventions of Twitpic.com. This could also be a URL to a media RSS feed where the clients can parse for media in a more structured way.
+        description: >   # <?> so we write we don't know how to submit
+          URL to media associated with the request, eg an image.
+
+          A convention for parsing media from this URL has yet to be established,
+          so currently it will be done on a case by case basis much like Twitter.com does.
+          For example, if a jurisdiction accepts photos submitted via Twitpic.com,
+          then clients can parse the page at the Twitpic URL for the image given the
+          conventions of Twitpic.com.
+
+          This could also be a URL to a media RSS feed where the clients can parse
+          for media in a more structured way.
 
   request_citysdk:
     title: CitySDK extensions to service request in GeoReport v2
-    description: CitySDK extensions add a title, multiple images and object identifier (service_object_*) to the original Georeport V2
+    description: >
+      CitySDK extensions add a title, multiple images and object identifier (service_object_*) data
+      to the original Georeport V2.
     required:
-    - title
+      - title
     properties:
       title:
         type: string
@@ -161,7 +217,9 @@ definitions:
 
   request_helsinki:
     title: Helsinki extensions to service request in CitySDK
-    description: Extensions for internal statistics usage for the City of Helsinki. These are unlikely to be of use to other parties and they are not used in this specification.
+    description: >
+      Extensions for internal statistics usage for the City of Helsinki.
+      These are unlikely to be of use to other parties and they are not used in this specification.
     properties:
       tasks:
         type: array
@@ -169,50 +227,54 @@ definitions:
         items:
           type: string
 
-  request_6aika:
-    title: 6Aika extensions to service request in CitySDK
-    description: 6aika extension is a history log for a request. This is a quintuple consisting of time-status-note-image. There are several versions of this same extension for Open311. Unfortunately no common ground exists yet.
+  request_log:
+    title: Request log extensions to service request in CitySDK
+    description:
+      An extension to log a request's history.
+
+      There are several versions of this same extension for Open311.
+      Unfortunately no common ground exists yet.
     properties:
-      request_history:
+      log:
         type: array
         title: History of actions done on this request
         items:
           type: object
           required:
-          - time
-          - status
+            - time
+            - status
           properties:
             time:
-              description: time when the request changed to this status. Datetimes are specified using ISO 8601 (e.g. "2016-01-12T13:42:00Z" or  "2016-01-12T15:42:00+02:00").
+              description: >
+                The time when the request changed to this status.
+                Datetimes are specified using ISO 8601.
               type: string
               format: date-time
             status:
-              description: status of request at this time
+              description: The status of request at this time
               type: string
               enum:
-              # Request has been received and stored into system
-              - received
-              # Request has been allocated to handler, can happen several times
-              - allocated
-              # Request is being handled (ie. request has been handed off to someone who will fix the broken things or answer information request).
-              - handling
-              # Request has been handled and something has been done to handle it
-              - done
-              # request required no action. We consider handle->done path better
-              #- no_action
+                - allocated   # Request has been allocated to handler, can happen several times
+                - handling  # Request is being handled (ie. request has been handed off to someone
+                # who will fix the broken things or answer information request).
+                - done  # Request has been handled and something has been done to handle it
+                # - no_action  # request required no action. We consider handle->done path better
             note:
-              description: freeform note regarding this status change
+              description: A freeform note regarding this status change
               type: string
             handler:
-              description: The person handling the request at this point of time. This is opaque id specific to the city. Also handler is likely only shown to authenticated users, with city specific authentication system.
+              description: >
+                The person handling the request at this point of time.
+                The format of this field is not specified; it can be an opaque id specific to the city.
+                It is possible that the API does not expose this value except for authenticated users.
               type: string
-            image:
-              description: URI for image relevant to this status change
+            attachment_url:
+              description: URI for an attachment, such as an image, relevant to this status change
               type: string
               format: uri
 
-# Service definition is copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
-# https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
+  # Service definition is copied verbatim from Georeport v2 Swagger-specification commit 0b2fc29 at:
+  # https://github.com/open311/swagger-open311/blob/master/open311-georeporter.yaml
   Service:
     title: Service type
     description: A single service (type) offered via Open311
@@ -233,7 +295,9 @@ definitions:
         type: string
       metadata:
         type: boolean
-        description: Are there additional form fields for this service type? If true use GET service definition for that one
+        description: >
+          Are there additional form fields for this service type?
+          If true use GET service definition for that one
       type:
         type: string
         description: Possible values realtime, batch, blackbox
@@ -260,9 +324,9 @@ paths:
         200:
           description: List of services
           schema:
-              type: array
-              items:
-                $ref: '#/definitions/Service'
+            type: array
+            items:
+              $ref: '#/definitions/Service'
           examples:
             application/xml:
               services:
@@ -277,7 +341,9 @@ paths:
                 - service:
                     service_code: '211'
                     service_name: Playgrounds and sports parks
-                    description: Report if equipment in the playgrounds or sport parks are broken or something else there needs fixing.
+                    description: >
+                      Report if equipment in the playgrounds or sport parks
+                      are broken or something else there needs fixing.
                     metadata: false
                     type: realtime
                     keywords: leikkipuisto,liikuntapaikka
@@ -285,19 +351,23 @@ paths:
                 - service:
                     service_code: '180'
                     service_name: Other issue to be fixed
-                    description: Use this category if you have found something broken and it does not fit into other categories.
+                    description: >
+                      Use this category if you have found something broken
+                      and it does not fit into other categories.
                     metadata: false
                     type: realtime
                     keywords: ''
                     group: Other
         400:
-          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+          description: >
+            The URL request is invalid or service is not running or reachable.
+            Client should notify us after checking URL
       parameters:
-      - $ref: '#/parameters/responseFormat'
-      - $ref: '#/parameters/localeParam'
+        - $ref: '#/parameters/responseFormat'
+        - $ref: '#/parameters/localeParam'
 
   /services/{service_code}.{response_format}:
-    get: 
+    get:
       summary: Query service definition
       tags:
         - service_type
@@ -307,15 +377,17 @@ paths:
           schema:
             $ref: '#/definitions/Service'
         400:
-          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+          description: >
+            The URL request is invalid or service is not running or reachable.
+            Client should notify us after checking URL
       parameters:
-      - name: service_code
-        in: path
-        description: The unique identifier for the service request type.
-        required: true
-        type: string
-      - $ref: '#/parameters/responseFormat'
-      - $ref: '#/parameters/localeParam'
+        - name: service_code
+          in: path
+          description: The unique identifier for the service request type.
+          required: true
+          type: string
+        - $ref: '#/parameters/responseFormat'
+        - $ref: '#/parameters/localeParam'
 
   /requests.{response_format}:
     get:
@@ -332,36 +404,48 @@ paths:
               allOf:
                 - $ref: '#/definitions/request_georeport'
                 - $ref: '#/definitions/request_citysdk'
-                - $ref: '#/definitions/request_6aika'
+                - $ref: '#/definitions/request_log'
           examples:
             requests:
               - request:
                   service_request_id: 3uqqutuj6or12lpgbtnv
                   service_code: '198'
-                  description: Liikennemerkki revitty irti paikoiltaan MellunmÃ¤en metroasemalla.
+                  description: Liikennemerkki revitty irti paikoiltaan Mellunmäen metroasemalla.
                   requested_datetime: '2015-11-03T08:20:10+02:00'
                   updated_datetime: '2015-11-04T12:45:02+02:00'
                   status: closed
-                  status_notes: "Hei,\n\nKiitos ilmoituksestanne. \n\nOlemme vÃ¤littÃ¤neet korjauspyynnÃ¶n alueen katujen kunnossapitoon.\nTerveisin\nRakennusviraston asiakaspalvelu\nPL 1508, 00099 Helsingin kaupunki\nElimÃ¤enkatu 5\np. +358931039000\nwww.hkr.hel.fi\n\n"
+                  status_notes: |-
+                    Hei,
+                    Kiitos ilmoituksestanne.
+                    Olemme välittäneet korjauspyynnön alueen katujen kunnossapitoon.
+
+                    Terveisin
+                    Rakennusviraston asiakaspalvelu
                   agency_responsible: Rakennusvirasto
                   service_name: Traffic signs
-                  address: MellunmÃ¤enraitio 6, 00970 Helsinki, Suomi
+                  address: Mellunmäenraitio 6, 00970 Helsinki, Suomi
                   lat: 60.2380422
                   media_url: https://asiointi.hel.fi/palautews/rest/v1/attachment/g8md6a5a11r42jooc633.jpg
                   long: 25.1078005
               - request:
                   service_request_id: bou3gcoifl7gcabm0fn2
                   service_code: '174'
-                  description: Puun oksa on revennyt lÃ¤hes kokonaan irti ja nojaa viereisen puun oksistoon. Paikka on aivan kÃ¤velytien vieressÃ¤ ja saattaapi hyvinkin seuraavassa myrÃ¤kÃ¤ssÃ¤ rojahtaa suoraan kÃ¤velytielle. Oksa on iso.
+                  description: >
+                    Puun oksa on revennyt lähes kokonaan irti ja nojaa viereisen puun oksistoon.
+                    Paikka on aivan kävelytien vieressä ja saattaapi hyvinkin seuraavassa myräkässä
+                    rojahtaa suoraan kävelytielle. Oksa on iso.
                   requested_datetime: '2015-11-02T10:05:10+02:00'
                   updated_datetime: '2015-11-03T16:28:38+02:00'
                   status: closed
                   status_notes: |-
-                    Kiitos ilmoituksestanne. Olen vÃ¤littÃ¤nyt asian alueen luonnonhoitoyksikkÃ¶Ã¶n tiedoksi ja toimenpiteitÃ¤ varten.
-                    YstÃ¤vÃ¤llisin terveisin
+                    Kiitos ilmoituksestanne.
+
+                    Olen välittänyt asian alueen luonnonhoitoyksikköön tiedoksi ja toimenpiteitä varten.
+
+                    Ystävällisin terveisin
                     Rakennusviraston asiakaspalvelu
                     PL 1508, 00099 Helsingin kaupunki
-                    ElimÃ¤enkatu 5
+                    Elimäenkatu 5
                     p. +358931039000
                     www.hkr.hel.fi
                   agency_responsible: Rakennusvirasto
@@ -371,82 +455,88 @@ paths:
                   media_url: https://asiointi.hel.fi/palautews/rest/v1/attachment/25gturq7deboolp1i8a2.jpg
                   long: 24.9885022
         400:
-          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+          description: >
+            The URL request is invalid or service is not running or reachable.
+            Client should notify us after checking URL
       parameters:
-      - name: service_request_id
-        in: query
-        description: Limit to requests with IDs in this list
-        required: false
-        type: string
-      - name: service_code
-        in: query
-        description: Comma separated list of service_code values to search for
-        required: false
-        type: array
-        items:
-          type: integer
-      - name: start_date
-        in: query
-        description: Limit to requests posted after or during this date
-        required: false
-        type: string
-        format: date
-      - name: end_date
-        in: query
-        description: Limit to requests posted before or during this date
-        required: false
-        type: string
-        format: date
-      - name: status
-        description: Limit to requests with one statuses listed here
-        in: query
-        type: string
-      - $ref: '#/parameters/enable_extensions'
-      # CitySDK extensions begin here
-      - name: updated_after
-        in: query
-        description: '**CitySDK extension** Limit to requests updated after or during this date'
-        required: false
-        type: string
-        format: date
-      - name: updated_before
-        in: query
-        description: '**CitySDK extension** Limit to requests updated before or during this date'
-        required: false
-        type: string
-        format: date
-      - name: radius
-        in: query
-        description: '**CitySDK extension** Search service requests within radius from the lat, long center'
-        required: false
-        type: string
-      - name: lat
-        in: query
-        description: '**CitySDK extension** Latitude of the issue to be searched for or posted'
-        required: false
-        type: string
-      - name: long
-        in: query
-        description: '**CitySDK extension** Longitude of the issue to be searched for or posted'
-        required: false
-        type: string
-      - name: service_object_id
-        in: query
-        description: '**CitySDK extension** Search or post service requests assigned to certain service objects, e.g trash bin'
-        required: false
-        type: string
-      - name: service_object_type
-        in: query
-        description: '**CitySDK extension** Type of the service object included in the service_object_id'
-        required: false
-        type: string
-      - name: handler
-        in: query
-        description: '**6Aika extension** Search for requests currently being handled by this handler. Only authenticated users(?)'
-        required: false
-        type: string
-      - $ref: '#/parameters/responseFormat'
-      - $ref: '#/parameters/localeParam'
+        - name: service_request_id
+          in: query
+          description: Limit to requests with IDs in this list
+          required: false
+          type: string
+        - name: service_code
+          in: query
+          description: Comma separated list of service_code values to search for
+          required: false
+          type: array
+          items:
+            type: integer
+        - name: start_date
+          in: query
+          description: Limit to requests posted after or during this date
+          required: false
+          type: string
+          format: date
+        - name: end_date
+          in: query
+          description: Limit to requests posted before or during this date
+          required: false
+          type: string
+          format: date
+        - name: status
+          description: Limit to requests with one statuses listed here
+          in: query
+          type: string
+        - $ref: '#/parameters/enable_extensions'
+        # CitySDK extensions begin here
+        - name: updated_after
+          in: query
+          description: '**CitySDK extension** Limit to requests updated after or during this date'
+          required: false
+          type: string
+          format: date
+        - name: updated_before
+          in: query
+          description: '**CitySDK extension** Limit to requests updated before or during this date'
+          required: false
+          type: string
+          format: date
+        - name: radius
+          in: query
+          description: '**CitySDK extension** Search service requests within radius from the lat, long center'
+          required: false
+          type: string
+        - name: lat
+          in: query
+          description: '**CitySDK extension** Latitude of the issue to be searched for or posted'
+          required: false
+          type: string
+        - name: long
+          in: query
+          description: '**CitySDK extension** Longitude of the issue to be searched for or posted'
+          required: false
+          type: string
+        - name: service_object_id
+          in: query
+          description: >
+            **CitySDK extension** Search or post service requests assigned to certain service objects, e.g trash bin
+          required: false
+          type: string
+        - name: service_object_type
+          in: query
+          description: >
+            **CitySDK extension** Type of the service object included in the service_object_id
+          required: false
+          type: string
+        - name: handler
+          in: query
+          description: >
+            **6Aika (request log) extension**
+            Search for requests currently being handled by this handler. Only authenticated users(?)
+          required: false
+          type: string
+        - $ref: '#/parameters/responseFormat'
+        - $ref: '#/parameters/localeParam'
 
     post:
       summary: Post a service request
@@ -460,86 +550,94 @@ paths:
         403:
           description: Missing or Invalid API Key
       parameters:
-      - name: api_key
-        in: formData
-        description: API key
-        required: true
-        type: string
-      - name: service_code
-        in: formData
-        description: Service code for the issue, as returned by /services
-        required: true
-        type: string
-      - name: description
-        in: formData
-        description: Description of the service request
-        required: true
-        type: string
-      - name: title
-        in: formData
-        description: Title description of service request
-        required: false
-        type: string
-      - name: media_url
-        in: formData
-        description: Link to media source such as image. Alternatively the image can be transferred in-situ using media[] field.
-        required: false
-        type: string
-      - name: 'media[]'
-        in: formData
-        description: '**CitySDK extension** Array of files to attach to the request. Swagger cannot accurately express this. Media field is repeated in the form as many times as there are uploads. The number of files allowed is determined by the API provider. Also, if this field is used, the data must be submitted as multipart/form-data.'
-        required: false
-        type: array
-        collectionFormat: multi
-        items:
+        - name: api_key
+          in: formData
+          description: API key
+          required: true
           type: string
-          format: binary
-      - name: email
-        in: formData
-        description: Email
-        required: false
-        type: string
-      - name: first_name
-        in: formData
-        description: First name
-        required: false
-        type: string
-      - name: last_name
-        in: formData
-        description: Last name
-        required: false
-        type: string
-      - name: address_string
-        in: formData
-        description: Address of the service request
-        required: false
-        type: string
-      - name: phone
-        in: formData
-        description: Phone number
-        required: false
-        type: string
-      - name: lat
-        in: formData
-        description: Latitude of the issue to be searched for or posted
-        required: false
-        type: string
-      - name: long
-        in: formData
-        description: Longitude of the issue to be searched for or posted
-        required: false
-        type: string
-      - name: service_object_id
-        in: formData
-        description: Search or post service requests assigned to certain service objects, e.g trash bin
-        required: false
-        type: string
-      - name: service_object_type
-        in: formData
-        description: Type of the service object included in the service_object_id
-        required: false
-        type: string
-      - $ref: '#/parameters/responseFormat'
+        - name: service_code
+          in: formData
+          description: Service code for the issue, as returned by /services
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: Description of the service request
+          required: true
+          type: string
+        - name: title
+          in: formData
+          description: Title description of service request
+          required: false
+          type: string
+        - name: media_url
+          in: formData
+          description: >
+            Link to media source such as image.
+            Alternatively the image can be transferred in-situ using media[] field.
+          required: false
+          type: string
+        - name: 'media[]'
+          in: formData
+          description: >
+            **CitySDK extension**
+            Array of files to attach to the request. Swagger cannot accurately express this.
+
+            Media field is repeated in the form as many times as there are uploads.
+            The number of files allowed is determined by the API provider.
+            Also, if this field is used, the data must be submitted as multipart/form-data.
+          required: false
+          type: array
+          collectionFormat: multi
+          items:
+            type: string
+            format: binary
+        - name: email
+          in: formData
+          description: Email
+          required: false
+          type: string
+        - name: first_name
+          in: formData
+          description: First name
+          required: false
+          type: string
+        - name: last_name
+          in: formData
+          description: Last name
+          required: false
+          type: string
+        - name: address_string
+          in: formData
+          description: Address of the service request
+          required: false
+          type: string
+        - name: phone
+          in: formData
+          description: Phone number
+          required: false
+          type: string
+        - name: lat
+          in: formData
+          description: Latitude of the issue to be searched for or posted
+          required: false
+          type: string
+        - name: long
+          in: formData
+          description: Longitude of the issue to be searched for or posted
+          required: false
+          type: string
+        - name: service_object_id
+          in: formData
+          description: Search or post service requests assigned to certain service objects, e.g trash bin
+          required: false
+          type: string
+        - name: service_object_type
+          in: formData
+          description: Type of the service object included in the service_object_id
+          required: false
+          type: string
+        - $ref: '#/parameters/responseFormat'
 
   /requests/{service_request_id}.{response_format}:
     get:
@@ -553,14 +651,16 @@ paths:
             allOf:
               - $ref: '#/definitions/request_georeport'
               - $ref: '#/definitions/request_citysdk'
-              - $ref: '#/definitions/request_6aika'
+              - $ref: '#/definitions/request_log'
         400:
-          description: The URL request is invalid or service is not running or reachable. Client should notify us after checking URL
+          description: >
+            The URL request is invalid or service is not running or reachable.
+            Client should notify us after checking URL
       parameters:
-      - $ref: '#/parameters/responseFormat'
-      - $ref: '#/parameters/enable_extensions'
-      - name: service_request_id
-        in: path
-        description: Unique service request id
-        required: true
-        type: string
+        - $ref: '#/parameters/responseFormat'
+        - $ref: '#/parameters/enable_extensions'
+        - name: service_request_id
+          in: path
+          description: Unique service request id
+          required: true
+          type: string
