@@ -516,6 +516,11 @@ paths:
           description: '**CitySDK extension** Longitude of the issue to be searched for or posted'
           required: false
           type: string
+        - name: bbox
+          in: query
+          description: '**6Aika extension** Search service requests within bounding box (left,bottom,right,top, e.g. 24.929,60.171,24.946,60.176)'
+          required: false
+          type: string
         - name: service_object_id
           in: query
           description: >
